@@ -165,7 +165,7 @@ fn main() {
   for cmd in cfg.general.commands {
     let mut c = cmd;
     for (k, v) in &mapped_drives {
-      c = c.replace(&format!("{{${}}}", k), &v.to_string());
+      c = c.replace(&format!("${{{}}}", k), &v.to_string());
     }
     
     run(&cfg.env.clone().unwrap_or(HashMap::new()), c);
