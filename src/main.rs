@@ -40,55 +40,6 @@ struct GeneralConfig {
   commands: Vec<String>,
 }
 
-// macro_rules! cmd {
-//   ($($k:expr=>$v:expr),*; $y:expr $(,$x:expr)* ) => ({
-//     let mut cmd = Command::new($y);
-//     $(
-//       cmd.env($k, $v);
-//     )*
-//     $(
-//       cmd.args($x);
-//     )*
-//     trace!("{:?}", cmd);
-//     cmd.stdout(Stdio::inherit())
-//     .stderr(Stdio::inherit())
-//     .output()
-//   });  
-//   ($y:expr $(,$x:expr)* ) => ({
-//     let mut cmd = Command::new($y);
-//     $(
-//       cmd.args($x);
-//     )*     
-//     cmd.stdout(Stdio::inherit())
-//     .stderr(Stdio::inherit())
-//     .output()
-//   });  
-// }
-
-// macro_rules! run {
-//   ($y:expr $(,$x:expr)*) => ({
-//     if !STOP.load(Ordering::SeqCst) {
-//       let args = shlex::split($y).unwrap();
-//       let mut v = vec!["-r", REPO];
-      
-//       for x in 0..args.len() {
-//         v.push(&args[x]);
-//       }
-
-//       $(
-//         for x in 0..($x).len() {
-//           v.push(&($x)[x]);
-//         }
-//       )*
-
-//       cmd!(
-//         "RESTIC_PASSWORD"=>PASS;
-//         "restic", v
-//       ).unwrap();
-//     }
-//   });  
-// }
-
 fn to_wstring(str: &str) -> Vec<u16> {
   let v: Vec<u16> = OsStr::new(str).encode_wide().chain(Some(0).into_iter()).collect();
   v
@@ -170,21 +121,4 @@ fn main() {
     
     run(&cfg.env.clone().unwrap_or(HashMap::new()), c);
   }
-
-  // 
-  // let sources = sources
-  //   .iter()
-  //   .map(|source| {
-  //     if !mapped_drives.is_empty() {
-  //       if let Some(l) = mapped_drives.get(&source.chars().nth(0).unwrap()) {
-  //         let mut s = String::new();
-  //         s.push(*l);
-  //         s.push_str(&source[1..]);
-  //         return s;
-  //       }
-  //     }
-
-  //     (*source).to_owned()
-  //   })
-  //   .collect();
 }
