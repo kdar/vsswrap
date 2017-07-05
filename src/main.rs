@@ -1,6 +1,5 @@
 extern crate kernel32;
 extern crate kernel32x;
-extern crate powrprofx;
 extern crate winapi;
 #[macro_use]
 extern crate log;
@@ -11,6 +10,7 @@ extern crate toml;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate wol;
 
 use simplelog::{TermLogger, LogLevelFilter};
 use std::ffi::OsStr;
@@ -36,7 +36,7 @@ struct Config {
 
 #[derive(Debug, Deserialize)]
 struct GeneralConfig {
-  shadow: Vec<char>,
+  shadow: Option<Vec<char>>,
   commands: Vec<String>,
 }
 
@@ -99,6 +99,12 @@ fn run<T: Into<String>>(env: &HashMap<String,String>, cmd: T) {
 
 fn main() {
   TermLogger::init(LogLevelFilter::Trace).unwrap();
+
+//   wol::send(
+//   vec![0x0C,0xC4,0x7A,0xC5,0x7F,0xDF],
+//   "255.255.255.255:9",
+//   "0.0.0.0:0"
+// );
 
   ctrlc::set_handler(move || {
     STOP.store(true, Ordering::SeqCst);
