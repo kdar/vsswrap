@@ -7,15 +7,10 @@ extern crate simplelog;
 extern crate clap;
 
 use simplelog::{WriteLogger, Config, LogLevelFilter};
-use std::process::{Command, Stdio};
-use std::collections::{HashMap, HashSet};
-use std::fs::File;
-use std::io::Read;
 use std::io::stderr;
 use clap::{App, AppSettings, Arg, SubCommand};
 
 mod vss;
-
 
 fn main() {
   //TermLogger::init(LogLevelFilter::Trace).unwrap();
@@ -43,7 +38,7 @@ fn main() {
           println!("{} {}", key.to_uppercase().to_string(), value);
         }
       },
-      ("delete", Some(delete_matches)) => {
+      ("delete", Some(_)) => {
         v.delete();
       },
       ("", None)     => println!("No subcommand was used"),
