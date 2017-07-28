@@ -7,6 +7,14 @@ use std::collections::HashMap;
 use kernel32;
 use kernel32x;
 
+use std::ffi::OsStr;
+use std::os::windows::ffi::OsStrExt;
+
+fn to_wstring(str: &str) -> Vec<u16> {
+  let v: Vec<u16> = OsStr::new(str).encode_wide().chain(Some(0).into_iter()).collect();
+  v
+}
+
 fn parse_vars<P: AsRef<Path>>(path: P) -> Result<Vec<(String, String)>, Box<Error>> {
   let mut results = vec![];
   let pb = path.as_ref().to_path_buf();
@@ -56,7 +64,7 @@ impl Vss {
     }
 
     info!("Creating shadow volumes...");
-    let mut cmd = Command::new(super::get_exe_dir() + "\\vendor\\vshadow64.exe");
+    let mut cmd = Command::new("vendor\\vshadow64.exe");
     cmd.arg("-p")
       .arg("-nw")
       .arg("-script=vss-vars.cmd");
@@ -93,8 +101,8 @@ impl Vss {
 
       let result = unsafe {
         kernel32x::DefineDosDeviceW(0,
-                                    super::to_wstring(&format!("{}:", available_drive)).as_ptr(),
-                                    super::to_wstring(shadow_device).as_ptr())
+                                    to_wstring(&format!("{}:", available_drive)).as_ptr(),
+                                    to_wstring(shadow_device).as_ptr())
       };
 
       if result != 1 {
@@ -112,20 +120,11 @@ impl Vss {
     Ok(())
   }
 
-  fn delete(&self) {
-    for (_, drive) in &self.mapped_drives {
-      info!("Removing shadowed drive: \"{}:\"", drive);
-      unsafe {
-        kernel32x::DefineDosDeviceW(kernel32x::DDD_REMOVE_DEFINITION,
-                                    super::to_wstring(&format!("{}:", drive)).as_ptr(),
-                                    0 as *const u16);
-      }
-    }
-
+  pub fn delete(&self) {
     if Path::new("vss-vars.cmd").exists() {
       let vars = parse_vars("vss-vars.cmd").unwrap();
       info!("Removing volume shadow set: \"{}\"", vars[0].1);
-      let mut cmd = Command::new(super::get_exe_dir() + "\\vendor\\vshadow64.exe");
+      let mut cmd = Command::new("vendor\\vshadow64.exe");
       cmd.arg(format!("-dx={}", vars[0].1));
       match cmd.output() {
         Ok(_) => {}
@@ -138,8 +137,3 @@ impl Vss {
   }
 }
 
-impl Drop for Vss {
-  fn drop(&mut self) {
-    self.delete();
-  }
-}

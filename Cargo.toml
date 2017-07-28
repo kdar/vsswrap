@@ -1,5 +1,5 @@
 [package]
-name = "perbackup"
+name = "vsswrap"
 version = "0.1.0"
 authors = ["Kevin Darlington <kevin@outroot.com>"]
 
@@ -8,11 +8,6 @@ time = "0.1"
 winapi = "0.2"
 kernel32-sys = "0.2"
 kernel32x = { path = "lib/kernel32x" }
-simplelog = "0.1"
+simplelog = "0.4"
 log = "0.3"
-shlex = "0.1.1"
-ctrlc = { version = "3.0", features = ["termination"] }
-serde = "1.0"
-serde_derive = "1.0"
-toml = "0.4"
-wol = "0.1"
+clap = "2.24"
