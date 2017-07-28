@@ -5,8 +5,10 @@ A simple wrapper around vshadow64.exe that makes it easier to script.
 
 ## Usage
 
-  vsswrap create C
-  csswrap delete
+```
+vsswrap create C
+vsswrap delete
+```
 
 ## Example
 
